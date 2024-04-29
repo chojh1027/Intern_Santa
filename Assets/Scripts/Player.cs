@@ -11,13 +11,14 @@ public class Player : MonoBehaviour
     public Scanner scanner;
 
     Rigidbody2D rigid;
-    SpriteRenderer spriter;
-    Animator anim;
+    SpriteRenderer[] sprites;
+    [SerializeField]
+    Animator[] anims;
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
-        spriter = GetComponent<SpriteRenderer>();
-        anim = GetComponent<Animator>();
+        sprites = GetComponentsInChildren<SpriteRenderer>();
+        anims = GetComponentsInChildren<Animator>();
         scanner = GetComponent<Scanner>();
     }
 
@@ -46,12 +47,14 @@ public class Player : MonoBehaviour
     {
         if (!GameManager.instance.isLive)
             return;
-
-        anim.SetFloat("Speed", inputVec.magnitude);
+        
+        for(int i = 0; i < 4; i++)
+            anims[i].SetFloat("Speed", inputVec.magnitude);
 
         if (inputVec.x != 0)
         {
-            spriter.flipX = inputVec.x < 0;
+            for(int i = 0; i < 4; i++)
+            sprites[i].flipX = inputVec.x < 0;
         }
     }
     void OnCollisionStay2D(Collision2D collision)
@@ -68,7 +71,9 @@ public class Player : MonoBehaviour
                 transform.GetChild(index).gameObject.SetActive(false);
             }
 
-            anim.SetTrigger("Dead");
+            for(int i = 0; i < 4; i++)
+                anims[i].SetTrigger("Dead");
+            
             GameManager.instance.GameOver();
         }
     }
