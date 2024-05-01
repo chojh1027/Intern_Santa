@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,13 +7,16 @@ public class Player : MonoBehaviour
     public float speed;
     public Scanner scanner;
 
-    Rigidbody2D rigid;
-    SpriteRenderer[] sprites;
+    private Rigidbody2D[] rigids;
+    private SpriteRenderer[] sprites;
     [SerializeField]
-    Animator[] anims;
+    private Animator[] anims;
+
+    private Vector3 dirVec;
+    private Vector3[] santaPoss = new Vector3[3];
     void Awake()
     {
-        rigid = GetComponent<Rigidbody2D>();
+        rigids = GetComponentsInChildren<Rigidbody2D>();
         sprites = GetComponentsInChildren<SpriteRenderer>();
         anims = GetComponentsInChildren<Animator>();
         scanner = GetComponent<Scanner>();
@@ -34,13 +34,42 @@ public class Player : MonoBehaviour
         if (!GameManager.instance.isLive)
             return;
 
-        Vector2 nextVec = inputVec * speed * Time.fixedDeltaTime;
-        rigid.MovePosition(rigid.position + nextVec);
+        Vector2 nextVec = inputVec * (speed * Time.fixedDeltaTime);
+        
+        //rigids[0].MovePosition(rigids[0].position + nextVec);
+
+        transform.position += new Vector3(nextVec.x, nextVec.y, 0);
+
+        
+        for (int i = 0; i < 5; i++)
+        {
+            
+        }
     }
 
     void OnMove(InputValue value)
     {
         inputVec = value.Get<Vector2>();
+
+        if (!inputVec.Equals(Vector3.zero))
+        {
+            dirVec = inputVec;
+
+            santaPoss[0] = dirVec * 1.7f;
+            santaPoss[1].x = santaPoss[0].x * -0.5f - santaPoss[0].y * 0.886f;
+            santaPoss[1].y = santaPoss[0].x * 0.886f + santaPoss[0].y * -0.5f;
+            santaPoss[2].x = santaPoss[0].x * -0.5f - santaPoss[0].y * -0.886f;
+            santaPoss[2].y = santaPoss[0].x * -0.886f + santaPoss[0].y * -0.5f;
+        }
+            
+        
+        
+    }
+
+    //인자값(santa)의 santaPos와 santaPos가 센터인 santa의 santaPos를 스왑
+    public void ChangeToCenter()
+    {
+        
     }
     
     void LateUpdate()
@@ -54,9 +83,10 @@ public class Player : MonoBehaviour
         if (inputVec.x != 0)
         {
             for(int i = 0; i < 4; i++)
-            sprites[i].flipX = inputVec.x < 0;
+                sprites[i].flipX = inputVec.x < 0;
         }
     }
+    
     void OnCollisionStay2D(Collision2D collision)
     {
         if (!GameManager.instance.isLive)
