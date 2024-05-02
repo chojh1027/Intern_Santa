@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,15 +12,19 @@ public class Player : MonoBehaviour
     private SpriteRenderer[] sprites;
     [SerializeField]
     private Animator[] anims;
+    
+    private Transform[] santaNowPoss;
 
     private Vector3 dirVec;
-    private Vector3[] santaPoss = new Vector3[3];
+    private Vector2[] santaPoss = new Vector2[3];
+    private int centerSantaIndex = 1;
     void Awake()
     {
         rigids = GetComponentsInChildren<Rigidbody2D>();
         sprites = GetComponentsInChildren<SpriteRenderer>();
         anims = GetComponentsInChildren<Animator>();
         scanner = GetComponent<Scanner>();
+        santaNowPoss = GetComponentsInChildren<Transform>();
     }
 
    
@@ -36,17 +41,56 @@ public class Player : MonoBehaviour
 
         Vector2 nextVec = inputVec * (speed * Time.fixedDeltaTime);
         
-        //rigids[0].MovePosition(rigids[0].position + nextVec);
-
         transform.position += new Vector3(nextVec.x, nextVec.y, 0);
-
         
-        for (int i = 0; i < 5; i++)
-        {
-            
-        }
+        if(Input.GetKeyDown(KeyCode.Space))
+            ChangeToCenter(2);
+        
+        //for(int i = 0; i < 3; i++)
+        //{
+        //    new
+        //    rigids[i + 2].MovePosition(santaPoss[i] * (speed * Time.fixedDeltaTime));
+        //}
+        
+        //var maxDis = (rigids[centerSantaIndex].position - (Vector2)transform.position).magnitude > 3f;
+        //
+        //if(maxDis)
+        //    return;
+        //rigids[0].MovePosition(rigids[1].position + nextVec);
+
     }
 
+    //인자값(santa)의 santaPos와 santaPos가 센터인 santa의 santaPos를 스왑
+    public void ChangeToCenter(int index)
+    {
+        Debug.Log("ctccalled");
+        StartCoroutine(CTCRoutine(2));
+    }
+
+    private IEnumerator CTCRoutine(int index)
+    {
+        Debug.Log("Routine started");
+        var startLoPos = santaNowPoss[index].localPosition;
+        var targetLoPos = santaNowPoss[centerSantaIndex].localPosition;
+        var dir = targetLoPos - startLoPos;
+        float velo = 1;
+        float timedelta = 0;
+        while (true)
+        {
+            santaNowPoss[index].localPosition += dir * (velo * Time.fixedDeltaTime);
+            santaNowPoss[centerSantaIndex].localPosition += dir * (velo * Time.fixedDeltaTime);
+
+            timedelta += Time.fixedDeltaTime;
+            
+            if (timedelta > 1.0)
+                break;
+        }
+        santaNowPoss[index].localPosition = targetLoPos;
+        santaNowPoss[centerSantaIndex].localPosition = startLoPos;
+        centerSantaIndex = index;
+        yield return null;
+    }
+    
     void OnMove(InputValue value)
     {
         inputVec = value.Get<Vector2>();
@@ -61,14 +105,6 @@ public class Player : MonoBehaviour
             santaPoss[2].x = santaPoss[0].x * -0.5f - santaPoss[0].y * -0.886f;
             santaPoss[2].y = santaPoss[0].x * -0.886f + santaPoss[0].y * -0.5f;
         }
-            
-        
-        
-    }
-
-    //인자값(santa)의 santaPos와 santaPos가 센터인 santa의 santaPos를 스왑
-    public void ChangeToCenter()
-    {
         
     }
     
