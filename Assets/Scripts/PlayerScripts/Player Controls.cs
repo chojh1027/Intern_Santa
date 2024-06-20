@@ -160,6 +160,34 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""ChangeMainSanta"",
+            ""id"": ""71122007-5039-4e46-813d-b05f01d500b2"",
+            ""actions"": [
+                {
+                    ""name"": ""New action"",
+                    ""type"": ""Value"",
+                    ""id"": ""f184afa7-b3d4-42a2-b630-d0587645ff27"",
+                    ""expectedControlType"": ""Integer"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""7e54f2be-2544-4c32-b046-2f139e9eaa23"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""New action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -167,6 +195,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         // PlayerMovement
         m_PlayerMovement = asset.FindActionMap("PlayerMovement", throwIfNotFound: true);
         m_PlayerMovement_MoveInput = m_PlayerMovement.FindAction("MoveInput", throwIfNotFound: true);
+        // ChangeMainSanta
+        m_ChangeMainSanta = asset.FindActionMap("ChangeMainSanta", throwIfNotFound: true);
+        m_ChangeMainSanta_Newaction = m_ChangeMainSanta.FindAction("New action", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -270,8 +301,58 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public PlayerMovementActions @PlayerMovement => new PlayerMovementActions(this);
+
+    // ChangeMainSanta
+    private readonly InputActionMap m_ChangeMainSanta;
+    private List<IChangeMainSantaActions> m_ChangeMainSantaActionsCallbackInterfaces = new List<IChangeMainSantaActions>();
+    private readonly InputAction m_ChangeMainSanta_Newaction;
+    public struct ChangeMainSantaActions
+    {
+        private @PlayerControls m_Wrapper;
+        public ChangeMainSantaActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Newaction => m_Wrapper.m_ChangeMainSanta_Newaction;
+        public InputActionMap Get() { return m_Wrapper.m_ChangeMainSanta; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(ChangeMainSantaActions set) { return set.Get(); }
+        public void AddCallbacks(IChangeMainSantaActions instance)
+        {
+            if (instance == null || m_Wrapper.m_ChangeMainSantaActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_ChangeMainSantaActionsCallbackInterfaces.Add(instance);
+            @Newaction.started += instance.OnNewaction;
+            @Newaction.performed += instance.OnNewaction;
+            @Newaction.canceled += instance.OnNewaction;
+        }
+
+        private void UnregisterCallbacks(IChangeMainSantaActions instance)
+        {
+            @Newaction.started -= instance.OnNewaction;
+            @Newaction.performed -= instance.OnNewaction;
+            @Newaction.canceled -= instance.OnNewaction;
+        }
+
+        public void RemoveCallbacks(IChangeMainSantaActions instance)
+        {
+            if (m_Wrapper.m_ChangeMainSantaActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IChangeMainSantaActions instance)
+        {
+            foreach (var item in m_Wrapper.m_ChangeMainSantaActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_ChangeMainSantaActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public ChangeMainSantaActions @ChangeMainSanta => new ChangeMainSantaActions(this);
     public interface IPlayerMovementActions
     {
         void OnMoveInput(InputAction.CallbackContext context);
+    }
+    public interface IChangeMainSantaActions
+    {
+        void OnNewaction(InputAction.CallbackContext context);
     }
 }

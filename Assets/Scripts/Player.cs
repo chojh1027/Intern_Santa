@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public float speed;
     public Scanner scanner;
     public SantaState state;
+    public int SantaIndex;
     
     private Rigidbody2D RB;
     private SpriteRenderer SP;
@@ -22,7 +23,7 @@ public class Player : MonoBehaviour
         RB = GetComponent<Rigidbody2D>();
         SP = GetComponent<SpriteRenderer>();
         ANIM = GetComponent<Animator>();
-        scanner = GetComponent<Scanner>();
+        scanner = GetComponentInChildren<Scanner>();
 
         state = SantaState.ChaseMain;
     }
@@ -37,7 +38,18 @@ public class Player : MonoBehaviour
 
         switch (state)
         {
-            
+            case SantaState.MainSanta:
+                MainSanta();
+                break;
+            case SantaState.ChaseMain:
+                ChaceMain();
+                break;
+            case SantaState.NormalAtt:
+                break;
+            case SantaState.SpecialAtt:
+                break;
+            case SantaState.Dead:
+                break;
         }
     }
 
@@ -54,24 +66,49 @@ public class Player : MonoBehaviour
         if (!GameManager.instance.isLive)
             return;
         
-        if (inputVec.x != 0)
+        if (RB.velocity.x != 0)
         {
-            SP.flipX = inputVec.x < 0;
+            SP.flipX = RB.velocity.x < 0;
         }
     }
     
     private void OnCollisionStay2D(Collision2D collision)
     {
+        if (!collision.gameObject.CompareTag("Enemy")) return;
         if (!GameManager.instance.isLive)
             return;
 
-        GameManager.instance.currentHealth -= Time.deltaTime * 10;
+        GameManager.instance.currentHealth[SantaIndex] -= Time.deltaTime * 10;
         
-        if(GameManager.instance.currentHealth < 0)
+        if(GameManager.instance.currentHealth[SantaIndex] < 0)
         {
+            state = SantaState.Dead;
             ANIM.SetTrigger(AnimDead);
             
             GameManager.instance.GameOver();
+        }
+    }
+
+    private void MainSanta()
+    {
+        //var dirVec = GameManager.instance.inputVec;
+        RB.velocity = inputVec * speed;
+    }
+
+    private bool chaseInRange;
+    private float chaseTimer;
+    private void ChaceMain()
+    {
+        var dir = GameManager.instance.players[GameManager.instance.MainSantaIndex].GetComponent<Rigidbody2D>()
+            .position - RB.position;
+        if (dir.sqrMagnitude > 10f)
+        {
+            RB.velocity = dir.normalized * speed;
+        }
+        else
+        {
+            
+            RB.velocity = inputVec * (speed * 0.5f);
         }
     }
 }

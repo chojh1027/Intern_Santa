@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class Follow : MonoBehaviour
 {
+    Camera mainCam;
+    
     RectTransform rect;
+    public Transform followSanta;
     void Awake()
     {
         rect = GetComponent<RectTransform>();
+        mainCam = Camera.main;
+        //followSanta = GameManager.instance.players[0].transform;
     }
 
-    // Update is called once per frame
+    
     void FixedUpdate()
     {
-        rect.position = Camera.main.WorldToScreenPoint(GameManager.instance.player.transform.position);
+        rect.position = mainCam.WorldToScreenPoint(followSanta.position);
     }
 }

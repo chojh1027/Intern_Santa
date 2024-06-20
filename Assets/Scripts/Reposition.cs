@@ -15,9 +15,9 @@ public class Reposition : MonoBehaviour
         if(!collision.CompareTag("Area"))
             return;
 
-        Vector3 playerPos = GameManager.instance.player.transform.position;
+        Vector3 playerPos = GameManager.instance.players[GameManager.instance.MainSantaIndex].transform.position;
         Vector3 myPos = transform.position;
-        Vector3 playerDir = GameManager.instance.player.inputVec;
+        Vector3 playerDir = GameManager.instance.inputVec;
         
         switch (transform.tag)
         {
