@@ -1,7 +1,17 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
+
+public enum SantaState
+{
+    MainSanta,
+    ChaseMain,
+    NormalAtt,
+    SpecialAtt,
+    Dead
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -10,8 +20,10 @@ public class GameManager : MonoBehaviour
     public bool isLive;
     public float gameTime;
     public float maxGameTime = 100 * 60f;
-    [Header("# Player Info")]
-    public float health;
+    [Header("# Player Info")] 
+    public Player[] players;
+    public Vector2 inputVec;
+    public float[] currentHealth;
     public float maxHealth = 100;
     public int level;
     public int kill;
@@ -22,15 +34,29 @@ public class GameManager : MonoBehaviour
     public Player player;
     public Result uiResult;
     public GameObject enemyCleaner;
+
+    private PlayerControls inputAction;
     
     void Awake () 
     { 
-        instance = this; 
+        instance = this;
+        if (inputAction == null)
+        {
+            inputAction = new PlayerControls();
+            inputAction.PlayerMovement.MoveInput.performed +=
+                inputAction => inputVec = inputAction.ReadValue<Vector2>();
+            inputAction.Enable();
+        }
+    }
+
+    private void Start()
+    {
+        throw new NotImplementedException();
     }
 
     public void GameStart()
     {
-        health = maxHealth;
+        Array.Fill(currentHealth, maxHealth);
         
         isLive = true;
         Resume();
@@ -96,7 +122,7 @@ public class GameManager : MonoBehaviour
         {
             level++;
             exp = 0;
-
+            
         }
     }
     public void Stop()
