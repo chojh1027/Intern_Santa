@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -11,6 +12,8 @@ public class Enemy : MonoBehaviour
     public Rigidbody2D target;
 
     bool isLive;
+
+    int targetIndex;
 
     Rigidbody2D rigid;
     Collider2D coll;
@@ -24,6 +27,7 @@ public class Enemy : MonoBehaviour
         anim = GetComponent<Animator>();
         spriter = GetComponent<SpriteRenderer>();
         wait = new WaitForFixedUpdate();
+        targetIndex = Random.Range(0,4);
     }
 
     // Update is called once per frame
@@ -53,7 +57,7 @@ public class Enemy : MonoBehaviour
 
     void OnEnable()
     {
-        target = GameManager.instance.player.GetComponent<Rigidbody2D>();
+        target = GameManager.instance.players[targetIndex].GetComponent<Rigidbody2D>();
         isLive = true;
         coll.enabled = true;
         rigid.simulated = true;
@@ -75,7 +79,7 @@ public class Enemy : MonoBehaviour
         if (!collision.CompareTag("Bullet") || !isLive)
             return;
         health -= collision.GetComponent<Bullet>().damage;
-        StartCoroutine(KnockBack());
+        StartCoroutine(KnockBack(transform.position - collision.transform.position));
 
         if (health > 0)
         {
@@ -93,13 +97,10 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    IEnumerator KnockBack()
+    IEnumerator KnockBack(Vector2 dir)
     {
         yield return wait;
-        Vector3 playerPos = GameManager.instance.player.transform.position;
-        Vector3 dirVec = transform.position - playerPos;
-        rigid.AddForce(dirVec.normalized * 3, ForceMode2D.Impulse);
-        
+        rigid.AddForce(dir.normalized * 3, ForceMode2D.Impulse);
     }
     void Dead()
     {

@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
     public float gameTime;
     public float maxGameTime = 100 * 60f;
     [Header("# Player Info")] 
-    public Player[] players;
     public Vector2 inputVec;
     public float[] currentHealth;
     public float maxHealth = 100;
@@ -31,7 +30,8 @@ public class GameManager : MonoBehaviour
     public int[] nextExp = { 3, 5, 10, 100, 150, 210, 280, 360, 450, 600 };
     [Header("# Game Object")]
     public PoolManager pool;
-    public Player player;
+    public Player[] players;
+    public int MainSantaIndex;
     public Result uiResult;
     public GameObject enemyCleaner;
 
@@ -47,16 +47,29 @@ public class GameManager : MonoBehaviour
                 inputAction => inputVec = inputAction.ReadValue<Vector2>();
             inputAction.Enable();
         }
+
+        //players = new Player[4];
+        //players = GameObject.FindWithTag("Player").GetComponents<Player>();
+        for (int i = 0; i < 4; i++)
+        {
+            players[i].SantaIndex = i;
+        }
+        MainSantaIndex = 0;
+        currentHealth = new float[4];
     }
 
     private void Start()
     {
-        throw new NotImplementedException();
+        
     }
 
     public void GameStart()
     {
         Array.Fill(currentHealth, maxHealth);
+
+        
+
+        ChangeMainSanta(0);
         
         isLive = true;
         Resume();
@@ -135,5 +148,12 @@ public class GameManager : MonoBehaviour
     {
         isLive=true;
         Time.timeScale = 1;
+    }
+
+    public void ChangeMainSanta(int newIndex)
+    {
+        players[MainSantaIndex].state = SantaState.ChaseMain;
+        MainSantaIndex = newIndex;
+        players[MainSantaIndex].state = SantaState.MainSanta;
     }
 }

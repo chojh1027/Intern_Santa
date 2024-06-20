@@ -138,6 +138,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "ChangeMainSanta",
+            "id": "71122007-5039-4e46-813d-b05f01d500b2",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Value",
+                    "id": "f184afa7-b3d4-42a2-b630-d0587645ff27",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7e54f2be-2544-4c32-b046-2f139e9eaa23",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
