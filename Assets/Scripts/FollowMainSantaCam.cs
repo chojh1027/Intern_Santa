@@ -2,7 +2,7 @@ using System;
 using Cinemachine;
 using UnityEngine;
 
-public class FollowMainSanta : MonoBehaviour
+public class FollowMainSantaCam : MonoBehaviour
 {
     private Transform _mainSanta;
     private CinemachineVirtualCamera VC;

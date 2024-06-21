@@ -33,9 +33,13 @@ public class Player : MonoBehaviour
     {
         if (!GameManager.instance.isLive)
             return;
-
+        
         inputVec = GameManager.instance.inputVec;
+        
+        ANIM.SetFloat(AnimSpeed, inputVec.sqrMagnitude);
 
+
+        //코루틴을 사용해 FSM형태로 만들 예정
         switch (state)
         {
             case SantaState.MainSanta:
@@ -101,13 +105,18 @@ public class Player : MonoBehaviour
     {
         var dir = GameManager.instance.players[GameManager.instance.MainSantaIndex].GetComponent<Rigidbody2D>()
             .position - RB.position;
-        if (dir.sqrMagnitude > 10f)
+        var dirMag = dir.sqrMagnitude;
+        if (dirMag > 10f)
         {
             RB.velocity = dir.normalized * speed;
         }
-        else
+        else if(dirMag < 5f)
         {
             
+            RB.velocity = (dir.normalized * -2f) + inputVec * (speed * 0.5f);
+        }
+        else
+        {
             RB.velocity = inputVec * (speed * 0.5f);
         }
     }

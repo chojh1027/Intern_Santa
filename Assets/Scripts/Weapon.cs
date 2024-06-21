@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
 public class Weapon : MonoBehaviour
 {
@@ -9,8 +8,13 @@ public class Weapon : MonoBehaviour
     public float damage;
     public int count;
     public float speed;
+    public float skillSpeed;
+    public float skillInter;
+    public bool usingSkill = true;
 
     float timer;
+    float skillTimer;
+    float skillInterTimer;
     Player player;
 
     void Awake()
@@ -27,8 +31,17 @@ public class Weapon : MonoBehaviour
     {
         if (!GameManager.instance.isLive)
             return;
+
+        if (usingSkill)
+        {
+            UseSkill();
+            return;
+        }
+        
         if(player.scanner.nearestTarget == null)
             return;
+
+        
 
         switch (id)
         {
@@ -41,7 +54,8 @@ public class Weapon : MonoBehaviour
                 if (timer > speed)
                 {
                     timer = 0f;
-                    Fire();
+                    
+                    Fire(player.scanner.nearestTarget.position);
                 }
                 break;
 
@@ -90,11 +104,11 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    void Fire()
+    void Fire(Vector3 targetPos)
     {
         
 
-        Vector3 targetPos = player.scanner.nearestTarget.position;
+        
         Vector3 dir = targetPos - transform.position;
         dir = dir.normalized;
 
@@ -102,5 +116,31 @@ public class Weapon : MonoBehaviour
         bullet.position = transform.position;
         bullet.rotation = Quaternion.FromToRotation(Vector3.up, dir);
         bullet.GetComponent<Bullet>().Init(damage, count, dir);
+    }
+
+    private void UseSkill()
+    {
+        if (skillTimer < skillSpeed)
+        {
+            if (skillInterTimer > skillInter)
+            {
+                Vector2 myPos = transform.position;
+                Fire(UnityEngine.Random.insideUnitCircle + myPos);
+                skillInterTimer = 0f;
+            }
+            
+            skillTimer += Time.deltaTime;
+            skillInterTimer += Time.deltaTime;
+        }
+        else
+        {
+            skillTimer = 0f;
+            usingSkill = false;
+        }
+    }
+
+    public void ActiveSkill()
+    {
+        usingSkill = true;
     }
 }

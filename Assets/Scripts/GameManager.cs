@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 public enum SantaState
 {
@@ -44,12 +43,13 @@ public class GameManager : MonoBehaviour
         {
             inputAction = new PlayerControls();
             inputAction.PlayerMovement.MoveInput.performed +=
-                inputAction => inputVec = inputAction.ReadValue<Vector2>();
+                action => inputVec = action.ReadValue<Vector2>();
             inputAction.Enable();
         }
 
         //players = new Player[4];
         //players = GameObject.FindWithTag("Player").GetComponents<Player>();
+        
         for (int i = 0; i < 4; i++)
         {
             players[i].SantaIndex = i;
@@ -58,16 +58,14 @@ public class GameManager : MonoBehaviour
         currentHealth = new float[4];
     }
 
-    private void Start()
-    {
-        
-    }
-
     public void GameStart()
     {
         Array.Fill(currentHealth, maxHealth);
 
-        
+        foreach (var p in players)
+        {
+            p.gameObject.SetActive(true);
+        }
 
         ChangeMainSanta(0);
         
@@ -89,6 +87,7 @@ public class GameManager : MonoBehaviour
         uiResult.Lose();
         Stop();
     }
+    
     public void GameVictory()
     {
         StartCoroutine(GameVictoryRoutine());
@@ -105,15 +104,13 @@ public class GameManager : MonoBehaviour
         uiResult.Win();
         Stop();
     }
+    
     public void GameRetry()
     {
         SceneManager.LoadScene(0); 
     }
-    void Update()
+    private void CheckGameTimeForVictory()
     {
-        if (!isLive)  
-            return;
-
         gameTime += Time.deltaTime;
 
         if (gameTime > maxGameTime)
@@ -121,7 +118,14 @@ public class GameManager : MonoBehaviour
             gameTime = maxGameTime;
             GameVictory();
         }
+    }
+    
+    void Update()
+    {
+        if (!isLive)  
+            return;
 
+        CheckGameTimeForVictory();
     }
 
     public void GetExp()
@@ -143,7 +147,6 @@ public class GameManager : MonoBehaviour
         isLive = false;
         Time.timeScale = 0;
     }
-
     public void Resume()
     {
         isLive=true;

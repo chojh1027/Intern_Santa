@@ -13,7 +13,6 @@ public class FollowMainSantaArea : MonoBehaviour
         if (_mainSanta == null) _mainSanta = GameManager.instance.players[GameManager.instance.MainSantaIndex].transform;
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.position = _mainSanta.position;

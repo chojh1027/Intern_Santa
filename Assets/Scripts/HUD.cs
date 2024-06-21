@@ -7,6 +7,7 @@ public class HUD : MonoBehaviour
 {
     public enum InfoType { Exp, Level, Kill, Time, Health }
     public InfoType type;
+    public int santaIndex;
 
     Text myText;
     Slider mySlider;
@@ -41,7 +42,7 @@ public class HUD : MonoBehaviour
                 
                 break;
             case InfoType.Health:
-                float curHealth = GameManager.instance.currentHealth[0];
+                float curHealth = GameManager.instance.currentHealth[santaIndex];
                 float maxHealth = GameManager.instance.maxHealth;
                 mySlider.value = curHealth / maxHealth;               
                 break;
