@@ -151,9 +151,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""e8d499f1-a596-41c3-9d9b-6644d6c57a74"",
-                    ""path"": """",
+                    ""path"": ""<Joystick>/stick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""NormalizeVector2"",
                     ""groups"": """",
                     ""action"": ""MoveInput"",
                     ""isComposite"": false,

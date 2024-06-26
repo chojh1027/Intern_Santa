@@ -67,7 +67,10 @@ public class GameManager : MonoBehaviour
     {
         Array.Fill(currentHealth, maxHealth);
 
-        
+        foreach (var p in players)
+        {
+            p.gameObject.SetActive(true);
+        }
 
         ChangeMainSanta(0);
         

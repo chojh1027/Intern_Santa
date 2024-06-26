@@ -1,21 +1,36 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Reposition : MonoBehaviour
 {
     Collider2D coll;
+    private Vector2 playerPos;
 
     void Awake()
     {
         coll = GetComponent<Collider2D>();
+        
     }
+
+    private void Start()
+    {
+        //if(playerPos == Vector2.zero) playerPos = GameManager.instance.players[GameManager.instance.MainSantaIndex].transform.position;
+    }
+
+    private void Update()
+    {
+        playerPos = GameManager.instance.players[GameManager.instance.MainSantaIndex].transform.position;
+    }
+
     void OnTriggerExit2D(Collider2D collision)
     {
         if(!collision.CompareTag("Area"))
             return;
 
-        Vector3 playerPos = GameManager.instance.players[GameManager.instance.MainSantaIndex].transform.position;
+        
         Vector3 myPos = transform.position;
         Vector3 playerDir = GameManager.instance.inputVec;
         

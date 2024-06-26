@@ -35,6 +35,8 @@ public class Player : MonoBehaviour
             return;
 
         inputVec = GameManager.instance.inputVec;
+        
+        ANIM.SetFloat(AnimSpeed, inputVec.magnitude);
 
         switch (state)
         {
@@ -101,13 +103,18 @@ public class Player : MonoBehaviour
     {
         var dir = GameManager.instance.players[GameManager.instance.MainSantaIndex].GetComponent<Rigidbody2D>()
             .position - RB.position;
-        if (dir.sqrMagnitude > 10f)
+        var dirMag = dir.sqrMagnitude;
+        if (dirMag > 10f)
         {
             RB.velocity = dir.normalized * speed;
         }
-        else
+        else if(dirMag < 5f)
         {
             
+            RB.velocity = (dir.normalized * -2f) + inputVec * (speed * 0.5f);
+        }
+        else
+        {
             RB.velocity = inputVec * (speed * 0.5f);
         }
     }
